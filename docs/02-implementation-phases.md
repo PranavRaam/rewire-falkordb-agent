@@ -52,6 +52,8 @@ Use [the Phase 1 prompt](../prompts/phase-01.md), which specifies the scope and 
 
 **Gate:** all visual state comes from recorded server activity. UNKNOWN is distinct from failure. Reconnect preserves event order. A reviewer can understand why an action was selected and permitted without opening source files.
 
+**Acceptance status (17 October 2026): PASS.** The local FastAPI application serves a project overview and the live control room. It exposes graph-plan steps, artifacts and events through three exact read-only console queries, uses SSE for ordered durable events, and retains the evaluator-only provider audit outside agent-visible HTTP routes. The deterministic HTTP gate passed the base Carrier B and changed Carrier D paths, a post-commit lost response, repeat approval, expired-reservation blocking and one-booking checks. See [control-room verification](../reports/phase-05/control-room-verification.json).
+
 ## Phase 6 — Add counterfactual resilience inspection
 
 **Deliver:** isolated analysis snapshots; “disable this capability” preview; backup plans; BFS impact; WCC catalog islands; optional betweenness prioritization of which failures to analyze.

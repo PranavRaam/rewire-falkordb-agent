@@ -1,0 +1,86 @@
+{
+  "status": "PASS",
+  "checks": {
+    "crossSiteFormMutationDenied": true,
+    "planApprovalRequired": true,
+    "carrierBAndChangedCarrierD": true,
+    "exactQueryRowsExposed": true,
+    "snapshotStream": true,
+    "orderedDurableEvents": true,
+    "lostResponseReconciled": true,
+    "independentSingleBooking": true,
+    "repeatedApprovalDoesNotDuplicate": true,
+    "exportIncludesEvidence": true,
+    "expiredReservationBlocksExecution": true,
+    "consoleQueriesChecked": [
+      "Q18_console_steps",
+      "Q19_console_artifacts",
+      "Q20_console_events"
+    ]
+  },
+  "runs": [
+    {
+      "scenario": "base",
+      "runId": "run-69b2f303cd83",
+      "graphName": "rewire_phase1_69b2f303cd83",
+      "receipts": 4,
+      "events": 22,
+      "independentAudit": {
+        "source": "Independent provider SQLite ledger \u00b7 read-only evaluator",
+        "visibleToAgent": false,
+        "rowCounts": {
+          "bookings": 1,
+          "operations": 4,
+          "pickups": 1,
+          "quotes": 1,
+          "labels": 1
+        },
+        "bookings": [
+          {
+            "booking_id": "BK-4C8FAFB921",
+            "provider_id": "carrier-b",
+            "order_id": "O-104",
+            "reservation_id": "R81",
+            "pickup_id": "PU-9471E8FE48",
+            "quote_id": "QT-CB2DA59C6A",
+            "label_id": "LB-CF17C968E4",
+            "status": "CONFIRMED",
+            "created_at": 1792230600000
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "carrier-d",
+      "runId": "run-6f2c231a79c5",
+      "graphName": "rewire_phase1_6f2c231a79c5",
+      "receipts": 4,
+      "events": 22,
+      "independentAudit": {
+        "source": "Independent provider SQLite ledger \u00b7 read-only evaluator",
+        "visibleToAgent": false,
+        "rowCounts": {
+          "bookings": 1,
+          "operations": 4,
+          "pickups": 1,
+          "quotes": 1,
+          "labels": 1
+        },
+        "bookings": [
+          {
+            "booking_id": "BK-4BF4943E6B",
+            "provider_id": "carrier-d",
+            "order_id": "O-104",
+            "reservation_id": "R81",
+            "pickup_id": "PU-71BEBAD3A3",
+            "quote_id": "QT-A6AE4EFC0C",
+            "label_id": "LB-38704A7B84",
+            "status": "CONFIRMED",
+            "created_at": 1792230600000
+          }
+        ]
+      }
+    }
+  ],
+  "scope": "Local HTTP API, actual FalkorDB, deterministic MCP driver, synthetic provider. Browser and live model checked separately."
+}

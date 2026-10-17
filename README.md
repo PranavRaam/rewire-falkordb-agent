@@ -2,7 +2,7 @@
 
 **Decision: build Rewire.** Its graph discovery, execution coordinator, and recovery agent are implemented and checked against local FalkorDB and a synthetic provider world. See the [Phase 1 evidence](reports/phase-01.md) and [Phase 4 recovery verification](reports/phase-04/recovery-verification.json).
 
-**Start with [the revised judge's-eye plan](docs/10-revised-strategy.md), then [the query contract](docs/11-query-contract.md). Phase 1 acceptance, Phase 2 simulation, Phase 3 reconciliation, and Phase 4 model-backed recovery gates have passed for the documented synthetic fixtures.**
+**Start with [the revised judge's-eye plan](docs/10-revised-strategy.md), then [the query contract](docs/11-query-contract.md). Phase 1 acceptance, Phase 2 simulation, Phase 3 reconciliation, Phase 4 model-backed recovery, and Phase 5 control-room gates have passed for the documented synthetic fixtures.**
 
 Assumptions: one solo builder using an LLM coding assistant; the specified Python/FastAPI/FalkorDB/React/MCP stack; no scope reduction based on estimated hours. Every retained feature must have a visible demonstration, UI or README payoff. Documentation review is evidence of syntax and intended semantics, not proof that our composed queries work.
 
@@ -83,8 +83,8 @@ The intended competitive edge is the combination of a strong failure demonstrati
 - [x] Choose the Track 01 project.
 - [x] Create a separate Track 01 planning workspace.
 - [x] Specify product behavior, architecture, phases, examples and evaluation.
-- [ ] Verify capabilities on the image chosen for this project.
-- [ ] Implement the application and simulator.
+- [x] Verify the used FalkorDB capabilities on the project image.
+- [x] Implement the application, simulator and local control room.
 - [ ] Run the evaluation and publish measured results.
 - [ ] Produce submission materials.
 
@@ -137,3 +137,25 @@ The verification passed on 2026-10-17. Evidence and known limits are documented 
 
 The bounded model tool loop discovers its schemas through MCP and restricts graph/run scope and synthetic clock. Ordinary agent sessions receive read-only tools. A trusted host can approve one exact recovery snapshot by digest; only then is `execute_approved_recovery` exposed. Approval is never inferred from model prose. `recovery-preview --graph <graph> --run <run> --now-ms <fixture-time>` prints the plan and digest. Start the simulator on loopback with the same frozen time (`.\\run-simulator.ps1 --port 8091 --now-ms <fixture-time> --fault-after-commit booking`), then run the agent with `--approve-plan <digest> --provider-url http://127.0.0.1:8091`. Each prerequisite and final booking is revalidated against FalkorDB, has a durable intent before dispatch, uses a stable idempotency key, and is projected only after provider status proves the output. Ambiguous results stop for reconciliation rather than starting a second operation. `python scripts/verify_recovery.py` checks Carrier B and changed Carrier D graph plans and audits provider truth independently; `--live` additionally requires the configured model. This remains a single-coordinator-process synthetic-provider demonstration, not a distributed production executor.
 The checked environment was FalkorDB module 4.22.1, official `FalkorDB` Python client 1.8.0, CPython 3.10.0, Docker image digest `sha256:b0bdcac2cbaff989e77cb0610439b7a9289e86de033ccbbd4368b66fb680ae7a7`. Phase 1 acceptance is closed for the documented synthetic model; the detailed edge-case evidence is in [reports/phase-01/acceptance-verification.json](reports/phase-01/acceptance-verification.json).
+
+### Phase 5 control room and project overview
+
+The local web application provides a project overview, live recovery control room, graph-derived recovery map, query evidence explorer, durable event stream, recorded replay, independent provider audit and a three-minute presentation path. The overview is intentionally explicit about its illustrated graph; live claims and receipts appear only after a real local run.
+
+From the repository root, with Docker FalkorDB and Ollama running when model execution is desired:
+
+~~~powershell
+cd apps\web
+npm ci
+npm run build
+cd ..\..
+.\run-ui.ps1
+~~~
+
+Open `http://127.0.0.1:8787`. Select **Start a live recovery**, choose an isolated scenario, inspect the graph-backed plan, approve it, and select either the local-model MCP driver or direct deterministic MCP execution. The HTTP gate can be rerun with:
+
+~~~powershell
+python scripts/verify_control_room.py
+~~~
+
+The 17 October 2026 gate passed against actual FalkorDB. It checked cross-site mutation rejection, required approval, both valid carrier paths, exact UI query outputs, SSE ordering, lost-response reconciliation, independent one-booking audits, repeat-approval idempotency, evidence export and expired-reservation blocking. See [the saved verification result](reports/phase-05/control-room-verification.json).
