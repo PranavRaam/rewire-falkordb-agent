@@ -32,6 +32,8 @@ class ExecutionCoordinator:
 
     def transition(self, query_id: str, params: dict[str, Any], *, required: bool = True):
         """Execute a revision-guarded mutation within the coordinator lock."""
+        if query_id == "Q08_claim_intent":
+            params = {"payloadJson": "{}", **params}
         with self._lock:
             rows = result_rows(self.graph.query(load_query(query_id), params))
             if not required and not rows:
@@ -60,6 +62,7 @@ class ExecutionCoordinator:
 
     def claim_intent(self, params: dict[str, Any]) -> dict[str, Any]:
         """Deduplicate caller retries by operation key and payload identity."""
+        params = {"payloadJson": "{}", **params}
         with self._lock:
             existing = result_rows(self.graph.ro_query(
                 load_query("Q08C_lookup_operation"), params))

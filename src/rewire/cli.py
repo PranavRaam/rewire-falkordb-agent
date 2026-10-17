@@ -21,15 +21,26 @@ def main() -> None:
     agent.add_argument("--run", required=True)
     agent.add_argument("--now-ms", required=True, type=int)
     agent.add_argument("--request", required=True)
+    agent.add_argument("--approve-plan", help="exact digest from recovery-preview; trusted operator approval")
+    agent.add_argument("--provider-url", default="http://127.0.0.1:8091")
+    preview = commands.add_parser("recovery-preview", help="inspect the exact recovery plan before approval")
+    preview.add_argument("--graph", required=True)
+    preview.add_argument("--run", required=True)
+    preview.add_argument("--now-ms", required=True, type=int)
     mcp = commands.add_parser("mcp", help="serve typed graph tools over MCP")
     mcp.add_argument("--transport", choices=("stdio", "streamable-http"), default="stdio")
     mcp.add_argument("--host", default="127.0.0.1")
     mcp.add_argument("--port", type=int, default=8765)
     args = parser.parse_args()
+    if args.command == "recovery-preview":
+        from rewire.recovery import preview_recovery
+        print(json.dumps(preview_recovery(args.graph, args.run, args.now_ms), indent=2))
+        return
     if args.command == "agent":
         from rewire.agent import run_agent
         try:
-            print(json.dumps(run_agent(args.request, args.graph, args.run, args.now_ms), indent=2))
+            print(json.dumps(run_agent(args.request, args.graph, args.run, args.now_ms,
+                approved_digest=args.approve_plan, provider_url=args.provider_url), indent=2))
         except Exception as exc:
             print(f"Agent failed: {type(exc).__name__}: {exc}", file=sys.stderr)
             raise SystemExit(1) from exc

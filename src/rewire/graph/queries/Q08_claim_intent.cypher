@@ -9,7 +9,7 @@ WHERE run.stateRevision = $expectedRevision
 CREATE (i:Intent {
   id: $intentId, logicalEffectId: $effectId, operationKey: $operationKey,
   payloadHash: $payloadHash, status: 'PREPARED', providerId: $providerId,
-  createdAt: $nowMs
+  createdAt: $nowMs, payloadJson: $payloadJson
 })
 CREATE (effect)-[:HAS_INTENT]->(i)
 CREATE (i)-[:FOR_STEP]->(step)

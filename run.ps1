@@ -27,7 +27,7 @@ if (Test-Path -LiteralPath $dotenvPath) {
 $pythonCommand = (Get-Command python -ErrorAction Stop).Source
 $venvPython = Join-Path $PSScriptRoot '.venv\Scripts\python.exe'
 if (Test-Path -LiteralPath $venvPython) {
-    & $venvPython -c 'import falkordb' 2>$null
+    & $venvPython -c 'import falkordb; import mcp' 2>$null
     if ($LASTEXITCODE -eq 0) { $pythonCommand = $venvPython }
 }
 & $pythonCommand -m rewire.cli @RewireArgs

@@ -38,7 +38,9 @@ Use [the Phase 1 prompt](../prompts/phase-01.md), which specifies the scope and 
 
 **Deliver:** typed graph and action tools, constrained model decisions, bounded calls, query trace, receipt-grounded explanations and recorded model configuration.
 
-**Gate:** a real model selects tools and adapts to a changed fixture. It cannot access provider credentials or raw mutating endpoints. Invalid tool calls are logged as invalid; no scripted replacement is presented as model behavior.
+**Implementation status:** MCP tool schemas are discovered through the protocol. Graph/run and clock scope are enforced by the host. An operator approves a digest over the precise plan snapshot and revision; model text cannot grant approval. A loopback-only adapter executes dependency steps through durable graph intents, preflight, provider status reconciliation, receipt validation and graph projection. Ordinary sessions do not expose the action tool.
+
+**Gate:** live model execution and changed-fixture graph execution both reach provider-confirmed output. A response lost after provider commit recovers by the stable operation key; the independent provider audit shows one booking. `python scripts/verify_recovery.py` covers the synthetic adapter. Runtime gate remains to be run where FalkorDB local access is available.
 
 ## Phase 5 — Build the complete control room
 

@@ -41,6 +41,11 @@ class ConditionalPlanner:
         self.goal = goal
         self.now_ms = now_ms
         self.catalog_revision = catalog_revision
+        rows = store.select(graph_name).ro_query(
+            "MATCH (r:Run {id:$id}) RETURN r.stateRevision", {"id": run_id}).result_set
+        if len(rows) != 1:
+            raise ValueError("run not found")
+        self.revision = rows[0][0]
         self.max_depth = max_depth
         self.expansions = 0
         self.truncated = False
@@ -221,7 +226,7 @@ class ConditionalPlanner:
                             "runId": self.run_id,
                             "artifactId": artifact["artifactId"],
                             "typeId": slot["typeId"],
-                            "expectedRevision": 1,
+                            "expectedRevision": self.revision,
                             "expectedArtifactVersion": artifact["version"],
                             "schemaVersion": slot["schemaVersion"],
                             "requiredStatus": artifact["status"],

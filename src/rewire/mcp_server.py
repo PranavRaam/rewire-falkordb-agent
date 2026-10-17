@@ -1,13 +1,14 @@
 """MCP tools backed by project-owned FalkorDB graphs.
 
-Only graph inspection and conditional planning are exposed here. The model has
-no provider credentials and no raw mutation or HTTP endpoint tool.
+Action tools require a scoped authorization installed by the trusted host.
+The model has no approval tool, provider credentials or raw HTTP endpoint tool.
 """
 from __future__ import annotations
 
 import argparse
 import ipaddress
 import json
+from contextlib import contextmanager
 from typing import Any
 
 from mcp.server import MCPServer
@@ -17,6 +18,37 @@ from rewire.graph.store import GraphStore, load_query, result_rows
 from rewire.planner.engine import ConditionalPlanner
 
 mcp = MCPServer("Rewire Connected-Data Agent")
+_authorizations: dict[tuple[str, str], tuple[str, str]] = {}
+
+
+@contextmanager
+def authorize_recovery(graph_name: str, run_id: str, digest: str, provider_url: str):
+    """Trusted host boundary; deliberately not registered as an MCP tool."""
+    from rewire.recovery import EXECUTION_LOCK
+    with EXECUTION_LOCK:
+        scope = (graph_name, run_id)
+        if scope in _authorizations:
+            raise RuntimeError("another host session already owns this run")
+        _authorizations[scope] = (digest, provider_url)
+    try:
+        yield
+    finally:
+        _authorizations.pop(scope, None)
+
+
+@mcp.tool()
+def execute_approved_recovery(graph_name: str, run_id: str) -> dict[str, Any]:
+    """Execute or reconcile the host-approved plan, with graph preflight and durable receipts."""
+    from rewire.recovery import RecoverySession
+    authorization = _authorizations.get((graph_name, run_id))
+    if authorization is None:
+        raise ValueError("trusted host approval is required; model text cannot grant approval")
+    digest, provider_url = authorization
+    session = RecoverySession(graph_name, run_id, provider_url)
+    try:
+        return session.execute(digest)
+    finally:
+        session.close()
 
 
 def _require_loopback(host: str) -> None:
