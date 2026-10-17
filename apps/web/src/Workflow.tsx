@@ -247,17 +247,17 @@ export function Workflow({
             type: MarkerType.ArrowClosed,
             width: 13,
             height: 13,
-            color: done ? "#6c7848" : "#ac998b",
+            color: done ? "#d9ff48" : "#718098",
           },
           style: {
-            stroke: done ? "#7c8954" : "#ac998b",
-            strokeWidth: 1.6,
+            stroke: done ? "#d9ff48" : "#718098",
+            strokeWidth: done ? 2.4 : 1.8,
             strokeDasharray: done ? undefined : "5 5",
           },
           label:
             input.typeId === "Reservation" ? "preserve & reuse" : undefined,
-          labelStyle: { fontSize: 11, fill: "#6f654f" },
-          labelBgStyle: { fill: "#f6f3ec" },
+          labelStyle: { fontSize: 11, fill: "#e9f0dc" },
+          labelBgStyle: { fill: "#111a28" },
           labelBgPadding: [7, 4],
         }),
       );
@@ -301,7 +301,7 @@ export function Workflow({
       preventScrolling={false}
       aria-label="Graph-derived recovery workflow"
     >
-      <Background color="#ddd5c8" gap={22} size={1} />
+      <Background color="#66758a" gap={22} size={1} />
       <Controls showInteractive={false} />
     </ReactFlow>
   );

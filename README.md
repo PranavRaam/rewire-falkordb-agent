@@ -140,7 +140,7 @@ The checked environment was FalkorDB module 4.22.1, official `FalkorDB` Python c
 
 ### Phase 5 control room and project overview
 
-The local web application provides a project overview, live recovery control room, graph-derived recovery map, query evidence explorer, durable event stream, recorded replay, independent provider audit and a three-minute presentation path. The overview introduces the synthetic O-104 incident and separates its known facts from the recovery actions that the live run will perform.
+The local web application opens on an incident launch surface, then moves into the live recovery control room. It exposes the graph-derived plan, recorded Cypher and results, bounded planner work, preserved artifacts, approval digest, MCP execution, durable event stream, replay, provider receipts and an independent provider-ledger audit. The UI currently demonstrates the fulfillment fixture; other domains require their own graph contracts, data and provider adapter.
 
 From the repository root, with Docker FalkorDB and Ollama running when model execution is desired:
 
@@ -152,7 +152,7 @@ cd ..\..
 .\run-ui.ps1
 ~~~
 
-Open `http://127.0.0.1:8787`. Select **Start a live recovery**, choose an isolated scenario, inspect the graph-backed plan, approve it, and select either the local-model MCP driver or direct deterministic MCP execution. The HTTP gate can be rerun with:
+Open `http://127.0.0.1:8787`. Launch the lost-response incident to create a fresh FalkorDB graph and isolated provider ledger. Inspect the discovered plan and query evidence, approve the exact plan digest, choose the local-model MCP driver or direct deterministic MCP execution, then run the independent audit to verify the provider booking count. The HTTP gate can be rerun with:
 
 ~~~powershell
 python scripts/verify_control_room.py
