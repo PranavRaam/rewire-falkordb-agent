@@ -1,6 +1,6 @@
 # Rewire Phase 1 — implementation and evidence
 
-**Status: core graph discovery is implemented and checked against local FalkorDB. Phase 1 is not fully closed yet.** The remaining acceptance gates at the end of this report are real work, not assumptions. No UI, live LLM, provider mutation, booking, or shipment-completion claim is part of this phase.
+**Status: core graph discovery and the Phase 1 acceptance suite passed against local FalkorDB.** The acceptance run covers cycle and depth termination, graph isolation, outage fail-closed behavior, renamed/permuted imports, importer validation, and large query results. Evidence is saved in [acceptance-verification.json](phase-01/acceptance-verification.json). No UI, live LLM, provider mutation, booking, or shipment-completion claim is part of Phase 1.
 
 ## What Phase 1 now does
 
@@ -79,19 +79,19 @@ The local setup started from the existing `falkordb-local` Docker Compose servic
 - `reports/phase-01/created-graphs.json` — explicit registry of Phase 1 graph names, statuses and reports.
 - `reports/phase-01/runs/` — full machine-readable run and query evidence. Failed attempts are retained and clearly marked; no graph was globally flushed or deleted.
 
-## Still-open Phase 1 acceptance gates
+## Phase 1 acceptance gates
 
-These have not been verified yet, so Phase 1 is **not** complete:
+All six acceptance areas passed on 17 October 2026:
 
-1. A deliberately cyclic catalog and a dependency chain that hits the depth/search budget; verify termination and distinguish `SEARCH_LIMIT_REACHED` from exhaustive no-plan.
-2. Same-ID synthetic data in a second graph; issue queries against both names and prove there is no cross-graph read.
-3. Controlled database-outage probe; verify connection failure stops planning and never falls back to an in-memory catalog.
-4. Renamed IDs and permuted import order; verify the same semantic plan is selected.
-5. Importer negative cases for corrupt relationship endpoints/cardinality, conflicting artifact/type schema declarations, and unsupported slot cardinality.
-6. A scale/truncation check showing a large complete producer/slot result is not silently truncated and the planner reports its bound when reached.
+- A cyclic catalog terminates as `EXHAUSTIVE_NO_PLAN`; the depth fixture terminates as `SEARCH_LIMIT_REACHED`.
+- Same-ID graphs return their own distinct artifact status when queried separately.
+- A closed database port raises a connection error; no memory planner fallback runs.
+- Renamed IDs and reversed node import order preserve the same plan shape.
+- Corrupt relationship endpoints, duplicate edges, schema conflicts, and unsupported slot cardinality are rejected before graph writes.
+- Q01 returned all 2,020 producer rows. A separate bounded-search probe reported its configured test limit; production remains bounded at 2,000 expansions.
 
-The importer already rejects unsupported slot cardinality and duplicate/conflicting node IDs before writes, but those branches still need direct negative probes and richer relationship/cardinality validation. Importer validation is not a substitute for the remaining graph query checks.
+The importer now validates relationship endpoints and duplicate edges as part of its pre-write validation. The machine-readable evidence lists each check and result.
 
 ## Exact boundary
 
-Stop after these Phase 1 gates and review. The next phase must not begin until this report is reviewed. Phase 2 may persist plans and introduce the application/API boundary; UI, live model calls, simulator mutations and effect/receipt recovery stay later, separately gated work.
+Phase 1 is closed for the tested synthetic model and local FalkorDB version. The results do not establish correctness for arbitrary imported datasets or larger production graphs.

@@ -16,6 +16,8 @@ Use [the Phase 1 prompt](../prompts/phase-01.md), which specifies the scope and 
 
 **Gate:** FalkorDB returns the right requirements and bindings; discovery produces B's conditional recovery, rejects C's weight limit, preserves a valid R81, rejects stale/wrong-warehouse inputs, and changes output after a catalog change. Phase 1 proves planning facts, not successful shipping or the final execution guarantee.
 
+**Acceptance status (17 October 2026): PASS.** The supplemental runner checks cycle/depth limits, graph isolation, closed-port failure, renamed/permuted fixtures, importer negatives, and a complete 2,020-row producer result. See [machine-readable evidence](../reports/phase-01/acceptance-verification.json).
+
 ## Phase 2 — Build the independent provider world
 
 **Deliver:** inventory and carrier simulator with transactional records, stable operation keys, status lookup, seeded fixtures, a controlled clock and precise failure injection.
@@ -40,7 +42,9 @@ Use [the Phase 1 prompt](../prompts/phase-01.md), which specifies the scope and 
 
 **Implementation status:** MCP tool schemas are discovered through the protocol. Graph/run and clock scope are enforced by the host. An operator approves a digest over the precise plan snapshot and revision; model text cannot grant approval. A loopback-only adapter executes dependency steps through durable graph intents, preflight, provider status reconciliation, receipt validation and graph projection. Ordinary sessions do not expose the action tool.
 
-**Gate:** live model execution and changed-fixture graph execution both reach provider-confirmed output. A response lost after provider commit recovers by the stable operation key; the independent provider audit shows one booking. `python scripts/verify_recovery.py` covers the synthetic adapter. Runtime gate remains to be run where FalkorDB local access is available.
+**Gate:** live model execution and changed-fixture graph execution both reach provider-confirmed output. A response lost after provider commit recovers by the stable operation key; the independent provider audit shows one booking. `python scripts/verify_recovery.py` covers the synthetic adapter. The local FalkorDB gate passed; see [the Phase 4 verification report](../reports/phase-04/recovery-verification.json).
+
+**Acceptance status (17 October 2026): PASS.** The live Qwen model selected the MCP action on both base Carrier B and changed Carrier D graphs. The lost booking response reconciled, all four step receipts were recorded, and each isolated provider audit showed exactly one booking. See [recovery verification](../reports/phase-04/recovery-verification.json).
 
 ## Phase 5 — Build the complete control room
 

@@ -1,0 +1,27 @@
+{
+  "checks": {
+    "conflictingArtifactTypeSchemaRejectedBeforeWrite": true,
+    "corruptRelationshipEndpointRejected": true,
+    "databaseOutageFailsClosedWithoutMemoryFallback": {
+      "errorType": "ConnectionError",
+      "failedClosed": true
+    },
+    "dependencyCycleTerminatesAsExhaustiveNoPlan": true,
+    "depthBoundIsReportedSeparatelyFromExhaustiveFailure": true,
+    "duplicateRelationshipRejected": true,
+    "largeProducerQueryReturnsAllRows": {
+      "expected": 2020,
+      "rows": 2020
+    },
+    "plannerSearchLimitIsExplicit": {
+      "expansions": 3,
+      "plannerStatus": "SEARCH_LIMIT_REACHED",
+      "productionBound": 2000,
+      "testBound": 2
+    },
+    "renamedIdsAndPermutedImportPreservePlanShape": true,
+    "sameIdsAreIsolatedByGraphName": true,
+    "unsupportedSlotCardinalityRejected": true
+  },
+  "status": "PASS"
+}

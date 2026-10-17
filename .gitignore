@@ -16,4 +16,6 @@ reports/*/runs/
 reports/phase-02/*.json
 reports/phase-03/*.json
 reports/phase-04/*.json
+!reports/phase-01/acceptance-verification.json
+!reports/phase-04/recovery-verification.json
 

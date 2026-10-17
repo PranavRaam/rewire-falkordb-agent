@@ -1,0 +1,83 @@
+{
+  "status": "PASS",
+  "runs": [
+    {
+      "scenario": "base",
+      "checks": {
+        "unapprovedMcpActionDenied": true,
+        "invalidApprovalDenied": true,
+        "liveModelSelectedAction": true,
+        "allFourStepsHaveReceipts": true,
+        "reconstructedSessionReplay": true,
+        "lostBookingResponseReconciled": true,
+        "independentAuditExactlyOneBooking": true,
+        "noDuplicatePrerequisites": true
+      },
+      "graphName": "rewire_phase1_691d745b18d5",
+      "audit": {
+        "rowCounts": {
+          "orders": 1,
+          "warehouses": 1,
+          "reservations": 1,
+          "operations": 4,
+          "pickups": 1,
+          "quotes": 1,
+          "labels": 1,
+          "bookings": 1
+        },
+        "bookings": [
+          {
+            "booking_id": "BK-DC6DD1C6AD",
+            "provider_id": "carrier-b",
+            "order_id": "O-104",
+            "reservation_id": "R81",
+            "pickup_id": "PU-7E61411044",
+            "quote_id": "QT-E4829C6CC8",
+            "label_id": "LB-9FD811ACD8",
+            "status": "CONFIRMED",
+            "created_at": 1792230600000
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "carrier-d",
+      "checks": {
+        "unapprovedMcpActionDenied": true,
+        "invalidApprovalDenied": true,
+        "liveModelSelectedAction": true,
+        "allFourStepsHaveReceipts": true,
+        "reconstructedSessionReplay": true,
+        "lostBookingResponseReconciled": true,
+        "independentAuditExactlyOneBooking": true,
+        "noDuplicatePrerequisites": true
+      },
+      "graphName": "rewire_phase1_dcd59a742283",
+      "audit": {
+        "rowCounts": {
+          "orders": 1,
+          "warehouses": 1,
+          "reservations": 1,
+          "operations": 4,
+          "pickups": 1,
+          "quotes": 1,
+          "labels": 1,
+          "bookings": 1
+        },
+        "bookings": [
+          {
+            "booking_id": "BK-87B9DABF11",
+            "provider_id": "carrier-d",
+            "order_id": "O-104",
+            "reservation_id": "R81",
+            "pickup_id": "PU-6DFBE177DD",
+            "quote_id": "QT-C98DD4B0AB",
+            "label_id": "LB-CED68AD024",
+            "status": "CONFIRMED",
+            "created_at": 1792230600000
+          }
+        ]
+      }
+    }
+  ]
+}
