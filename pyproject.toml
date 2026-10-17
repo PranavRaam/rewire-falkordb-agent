@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools==75.8.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rewire"
+version = "0.1.0"
+description = "Phase 1 graph foundation and conditional workflow planner for Rewire"
+requires-python = ">=3.10"
+dependencies = ["FalkorDB==1.8.0", "mcp==2.1.1"]
+
+[project.scripts]
+rewire = "rewire.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

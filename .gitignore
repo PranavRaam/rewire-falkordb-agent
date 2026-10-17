@@ -1,0 +1,19 @@
+.venv/
+__pycache__/
+*.py[cod]
+.env
+data/
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+reports/phase-01/*.json
+reports/phase-01/*.jsonl
+reports/phase-01/*.txt
+
+# Generated verification artifacts
+reports/*/runs/
+reports/phase-02/*.json
+reports/phase-03/*.json
+reports/phase-04/*.json
+

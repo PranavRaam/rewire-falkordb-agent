@@ -1,0 +1,10 @@
+# Installed and resolved for CPython 3.10 on Windows, 2026-10-17.
+FalkorDB==1.8.0
+mcp==2.1.1
+mcp-types==2.1.1
+redis==8.1.0
+python-dateutil==2.9.0.post0
+six==1.17.0
+async-timeout==5.0.1
+# Pinned build backend from pyproject.toml.
+setuptools==75.8.0
