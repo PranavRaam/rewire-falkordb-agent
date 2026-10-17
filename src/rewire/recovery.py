@@ -109,7 +109,8 @@ class RecoverySession:
         else:
             preview = preview_recovery(self.graph_name, self.run_id, self.provider.now())
             if preview["approvalDigest"] != approved_digest:
-                raise ValueError("approval is stale or does not match the current graph and clock")
+                raise ValueError("approval is stale or does not match the current graph and clock "
+                    f"(approved {approved_digest[:12]}, current {preview['approvalDigest'][:12]})")
             snapshot = preview["snapshot"]
             plan_id = f"plan:{approved_digest}"
             self.coordinator.transition("Q16_select_approved_plan", self.params(

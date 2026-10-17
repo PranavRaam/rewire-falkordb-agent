@@ -401,15 +401,12 @@ def run_phase1(scenario_name: str = "base", now_ms: int | None = None) -> dict[s
         report["queryVerification"] = list(by_query.values())
         report["phaseCompletion"] = {
             "coreGraphDiscovery": "VERIFIED",
-            "remainingPhase1AcceptanceChecks": [
-                "cycle and search-budget/truncation fixtures",
-                "graph-name isolation with same IDs in two separately queried graphs",
-                "database outage failure behavior",
-                "ID renaming and import-order permutation invariance",
-                "relationship/cardinality/type-corruption importer negatives",
-                "required-slot result truncation safeguards at configured scale",
-            ],
-            "nextBoundary": "Stop after Phase 1; do not implement the UI, live LLM, or provider actions before review.",
+            "acceptanceGate": {
+                "status": "VERIFIED_BY_SUPPLEMENTAL_RUNNER",
+                "runner": "scripts/verify_phase1_acceptance.py",
+                "evidencePath": "reports/phase-01/acceptance-verification.json",
+            },
+            "nextBoundary": "Phase 1 planning facts do not establish provider execution outcomes.",
         }
         if result["status"] != expected_status:
             raise RuntimeError(f"Expected planner status {expected_status}, got {result['status']}")

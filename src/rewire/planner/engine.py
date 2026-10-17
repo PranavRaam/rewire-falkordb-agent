@@ -34,7 +34,8 @@ class PlanContext:
 class ConditionalPlanner:
     def __init__(self, store: GraphStore, graph_name: str, run_id: str,
                  goal: Goal, now_ms: int, catalog_revision: int,
-                 max_depth: int = MAX_DEPTH):
+                 max_depth: int = MAX_DEPTH,
+                 max_expansions: int = MAX_EXPANSIONS):
         self.store = store
         self.graph_name = graph_name
         self.run_id = run_id
@@ -47,6 +48,7 @@ class ConditionalPlanner:
             raise ValueError("run not found")
         self.revision = rows[0][0]
         self.max_depth = max_depth
+        self.max_expansions = max_expansions
         self.expansions = 0
         self.truncated = False
         self.query_evidence: list[dict[str, Any]] = []
@@ -189,7 +191,7 @@ class ConditionalPlanner:
             self.truncated = True
             return []
         self.expansions += 1
-        if self.expansions > MAX_EXPANSIONS:
+        if self.expansions > self.max_expansions:
             self.truncated = True
             return []
 
@@ -322,7 +324,7 @@ class ConditionalPlanner:
             "runId": self.run_id,
             "goal": self.goal.__dict__,
             "planner": "bounded-python-and-or-v1",
-            "limits": {"maxDepth": self.max_depth, "maxExpansions": MAX_EXPANSIONS},
+            "limits": {"maxDepth": self.max_depth, "maxExpansions": self.max_expansions},
             "exploredExpansions": self.expansions,
             "steps": steps,
             "preservedArtifacts": sorted(selected.reused) if selected else [],

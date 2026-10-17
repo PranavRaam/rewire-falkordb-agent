@@ -26,12 +26,9 @@ def verify(scenario="base", live=False):
     graph, run = seed["graphName"], seed["runId"]
     args = {"graph_name":graph,"run_id":run}
     checks = {}
-    try:
-        _call_mcp_tool("execute_approved_recovery", args)
-    except RuntimeError:
-        checks["unapprovedMcpActionDenied"] = True
-    else:
-        raise AssertionError("unapproved action executed")
+    denied = _call_mcp_tool("execute_approved_recovery", args)
+    assert denied.get("status") == "REJECTED", denied
+    checks["unapprovedMcpActionDenied"] = True
     preview = preview_recovery(graph, run, BASE_MS)
     with socket.socket() as sock:
         sock.bind(("127.0.0.1",0))
@@ -53,9 +50,9 @@ def verify(scenario="base", live=False):
                     if time.monotonic()>deadline: raise
                     time.sleep(.1)
             with authorize_recovery(graph,run,"invalid-digest",base):
-                try: _call_mcp_tool("execute_approved_recovery",args)
-                except RuntimeError: checks["invalidApprovalDenied"] = True
-                else: raise AssertionError("invalid approval accepted")
+                denied = _call_mcp_tool("execute_approved_recovery",args)
+                assert denied.get("status") == "REJECTED", denied
+                checks["invalidApprovalDenied"] = True
             if live:
                 result = run_agent("Execute the approved recovery and verify the booking evidence.",
                     graph,run,BASE_MS,approved_digest=preview["approvalDigest"],provider_url=base,

@@ -34,6 +34,29 @@ def _tool_schemas(allow_actions: bool):
     return asyncio.run(discover())
 
 
+def _model_tool_output(name: str, output: dict[str, Any]) -> dict[str, Any]:
+    """Keep the model context small; the unabridged result stays in the audit trace."""
+    if name != "discover_recovery":
+        return output
+    evidence = {}
+    for item in output.get("queryEvidence", []):
+        evidence.setdefault(item.get("queryId"), {
+            "queryId": item.get("queryId"), "sha256": item.get("sha256"),
+            "rowCount": item.get("rowCount")})
+    return {"status": output.get("status"), "runId": output.get("runId"),
+        "basedOnRevision": output.get("basedOnRevision"), "goal": output.get("goal"),
+        "steps": [{"ordinal": step.get("ordinal"), "toolId": step.get("toolId"),
+            "status": step.get("status"), "expectedOutputType": step.get("expectedOutputType"),
+            "inputs": [{k:v for k,v in binding.items() if k in
+                ("slotId","typeId","artifactId","producerStepId")} for binding in step.get("inputs", [])]}
+            for step in output.get("steps", [])],
+        "preservedArtifacts": output.get("preservedArtifacts", []),
+        "rejected": [{"toolId": item.get("toolId"),"reasonCode":item.get("reasonCode")}
+            for item in output.get("rejected", []) if item.get("toolId")],
+        "blockers": output.get("blockers", []), "queryEvidence": list(evidence.values()),
+        "executionWarning": output.get("executionWarning")}
+
+
 def _call_mcp_tool(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     """Execute a selected model call through the registered MCP protocol tools."""
     async def call() -> dict[str, Any]:
@@ -199,10 +222,13 @@ def _run_agent(user_request, graph_name, run_id, now_ms, max_tool_rounds, allow_
                 args = json.loads(function.get("arguments", "{}"))
                 if name not in allowed or not isinstance(args, dict):
                     raise ValueError("tool name or arguments are invalid")
-                if args.get("graph_name") != graph_name or args.get("run_id") != run_id:
-                    raise ValueError("tool attempted to change graph/run scope")
-                if "now_ms" in args and args["now_ms"] != now_ms:
-                    raise ValueError("model attempted to change the trusted clock")
+                requested_scope = {"graph_name":args.get("graph_name"),"run_id":args.get("run_id"),
+                                   "now_ms":args.get("now_ms")}
+                # The trusted host owns these values. Never let model-generated
+                # arguments select another graph, run or fixture time.
+                args["graph_name"], args["run_id"] = graph_name, run_id
+                if "now_ms" in args:
+                    args["now_ms"] = now_ms
                 executed = {item["tool"] for item in trace if item["status"] == "EXECUTED"}
                 if name != "inspect_run" and "inspect_run" not in executed:
                     raise ValueError("inspect_run is required first")
@@ -210,8 +236,10 @@ def _run_agent(user_request, graph_name, run_id, now_ms, max_tool_rounds, allow_
                     raise ValueError("discovery is required before execution")
                 output = _call_mcp_tool(name, args)
                 trace.append({"round":round_index,"tool":name,"arguments":args,
+                              "scopePinned": requested_scope != {"graph_name":graph_name,"run_id":run_id,
+                                  "now_ms":args.get("now_ms")},
                               "status":"EXECUTED","result":output})
-                content = json.dumps(output, sort_keys=True)
+                content = json.dumps(_model_tool_output(name, output), sort_keys=True)
             except Exception as exc:
                 trace.append({"round":round_index,"tool":name,"status":"INVALID_OR_FAILED",
                               "errorType":type(exc).__name__,"error":str(exc)})

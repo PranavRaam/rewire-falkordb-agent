@@ -42,11 +42,15 @@ def execute_approved_recovery(graph_name: str, run_id: str) -> dict[str, Any]:
     from rewire.recovery import RecoverySession
     authorization = _authorizations.get((graph_name, run_id))
     if authorization is None:
-        raise ValueError("trusted host approval is required; model text cannot grant approval")
+        return {"status": "REJECTED",
+                "reason": "trusted host approval is required; model text cannot grant approval"}
     digest, provider_url = authorization
     session = RecoverySession(graph_name, run_id, provider_url)
     try:
-        return session.execute(digest)
+        try:
+            return session.execute(digest)
+        except ValueError as exc:
+            return {"status": "REJECTED", "reason": str(exc)}
     finally:
         session.close()
 

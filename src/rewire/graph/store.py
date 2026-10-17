@@ -305,5 +305,30 @@ def validate_scenario(scenario: Scenario) -> None:
                 raise ValueError(f"slot {slot.id} minVersion must be a positive integer")
             if not isinstance(slot.scope_order, bool) or not isinstance(slot.scope_warehouse, bool):
                 raise ValueError(f"slot {slot.id} scope flags must be boolean")
-    # Detect duplicate IDs and conflicting ArtifactType schema declarations before writes.
+    # Validate every fixed-label endpoint and reject duplicate edges before the
+    # first graph write. Database ID constraints cannot enforce relationship shape.
     unique_nodes(goal, scenario.artifacts, scenario.tools, scenario.run_id)
+    nodes = {(label, str(props["id"])) for label, props in
+             node_rows(goal, scenario.artifacts, scenario.tools, scenario.run_id)}
+    endpoints = {
+        "HAS_GOAL": ("Run", "Goal"), "NEEDS_TYPE": ("Goal", "ArtifactType"),
+        "HAS_ARTIFACT": ("Run", "Artifact"), "INSTANCE_OF": ("Artifact", "ArtifactType"),
+        "PRODUCES": ("ToolRevision", "ArtifactType"),
+        "REQUIRES": ("ToolRevision", "RequirementSlot"),
+        "OF_TYPE": ("RequirementSlot", "ArtifactType"),
+        "CONSUMES": ("ToolRevision", "ArtifactType"),
+    }
+    edges = set()
+    for rel_type, source_id, target_id, _ in relationship_rows(
+            goal, scenario.artifacts, scenario.tools, scenario.run_id):
+        if rel_type not in ALLOWED_RELATIONSHIPS:
+            raise ValueError(f"Relationship type is not allowed: {rel_type}")
+        source_label, target_label = endpoints[rel_type]
+        if (source_label, str(source_id)) not in nodes:
+            raise ValueError(f"Missing {source_label} endpoint for {rel_type}: {source_id}")
+        if (target_label, str(target_id)) not in nodes:
+            raise ValueError(f"Missing {target_label} endpoint for {rel_type}: {target_id}")
+        edge = (rel_type, str(source_id), str(target_id))
+        if edge in edges:
+            raise ValueError(f"Duplicate relationship {rel_type}: {source_id} -> {target_id}")
+        edges.add(edge)
