@@ -41,9 +41,9 @@ LOCK = threading.RLock()
 JOBS: dict[str, bool] = {}
 PROCESSES: dict[str, subprocess.Popen] = {}
 SCENARIOS = [
-    {"id": "base", "name": "The missing response", "subtitle": "Carrier B · response lost after booking", "description": "Carrier A is disabled. Discover a compatible route, then recover the booking receipt after a deliberately lost response."},
-    {"id": "carrier-d", "name": "A different way forward", "subtitle": "Carrier D · changed tool catalog", "description": "Carrier B is disabled and Carrier D contracts are added. The same planner must discover a different chain."},
-    {"id": "expired", "name": "Know when to stop", "subtitle": "Expired reservation · no safe plan", "description": "The reservation expires at the synthetic clock boundary. A safe agent must refuse to ship."},
+    {"id": "base", "name": "Lost booking response", "subtitle": "Carrier A unavailable · Carrier B recovery", "description": "Reuse held reservation R81, discover Carrier B's required steps, then reconcile a committed booking whose response was dropped."},
+    {"id": "carrier-d", "name": "Carrier B is unavailable", "subtitle": "Changed catalog · Carrier D recovery", "description": "Disable Carrier B and add Carrier D contracts. Check that graph discovery finds a new valid chain without hardcoded fallback logic."},
+    {"id": "expired", "name": "Reservation has expired", "subtitle": "Stale inventory · expected safe stop", "description": "Move the synthetic clock past R81's expiry. The correct result is a blocked plan and no provider dispatch."},
 ]
 
 

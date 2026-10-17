@@ -140,7 +140,7 @@ The checked environment was FalkorDB module 4.22.1, official `FalkorDB` Python c
 
 ### Phase 5 control room and project overview
 
-The local web application provides a project overview, live recovery control room, graph-derived recovery map, query evidence explorer, durable event stream, recorded replay, independent provider audit and a three-minute presentation path. The overview is intentionally explicit about its illustrated graph; live claims and receipts appear only after a real local run.
+The local web application provides a project overview, live recovery control room, graph-derived recovery map, query evidence explorer, durable event stream, recorded replay, independent provider audit and a three-minute presentation path. The overview introduces the synthetic O-104 incident and separates its known facts from the recovery actions that the live run will perform.
 
 From the repository root, with Docker FalkorDB and Ollama running when model execution is desired:
 

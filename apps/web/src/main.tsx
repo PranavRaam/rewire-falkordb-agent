@@ -272,38 +272,36 @@ function App() {
   }
   function startScenario(scenarioId: string) {
     setScenario(scenarioId);
-    setFault(scenarioId === "base");
+    setFault(scenarioId !== "expired");
     setView("workspace");
     setDialog("new");
   }
   const overview = (
     <div className="project-overview">
       <section className="overview-hero">
-        <div className="overview-orbit orbit-one" />
-        <div className="overview-orbit orbit-two" />
         <div className="overview-copy">
           <div className="overview-kicker">
             <span className="pulse-dot" /> FALKORDB GRAPH HACKS · TRACK 01
           </div>
           <h1>
-            The agent that knows
+            A shipment is booked.
             <br />
-            <em>when not to act.</em>
+            <em>The reply is missing.</em>
           </h1>
           <p>
-            Rewire repairs interrupted operational workflows by reading the
-            connected facts first, preserving valid work, and proving every
-            external effect exactly once.
+            Should the agent try again? Rewire checks the connected workflow,
+            preserves the existing reservation, and reconciles the provider
+            before it risks creating a duplicate booking.
           </p>
           <div className="overview-actions">
             <button
               className="primary overview-start"
               onClick={() => {
-                setView("workspace");
-                if (!run) setDialog("new");
+                if (run) setView("workspace");
+                else startScenario("base");
               }}
             >
-              {run ? "Open the control room" : "Start a live recovery"}
+              {run ? "Open the control room" : "Open incident O-104"}
               <ArrowRight size={17} />
             </button>
             <button className="overview-text-link" onClick={() => setView("demo")}>
@@ -311,38 +309,26 @@ function App() {
             </button>
           </div>
         </div>
-        <div className="overview-artifact" aria-label="Illustrated recovery graph">
-          <div className="artifact-label">CONNECTED RECOVERY / ILLUSTRATED</div>
-          <div className="artifact-graph">
-            <div className="artifact-node source-node">
-              <Package size={19} />
-              <div><small>ORDER</small><strong>O-104</strong></div>
-            </div>
-            <span className="artifact-link link-a" />
-            <div className="artifact-node reservation-node">
-              <CheckCheck size={19} />
-              <div><small>RESERVATION</small><strong>R81</strong></div>
-            </div>
-            <span className="artifact-link link-b" />
-            <div className="artifact-node action-node">
-              <GitBranch size={19} />
-              <div><small>RECOVERY</small><strong>Plan route</strong></div>
-            </div>
-            <span className="artifact-link link-c" />
-            <div className="artifact-node outcome-node">
-              <ShieldCheck size={19} />
-              <div><small>PROOF</small><strong>1 booking</strong></div>
-            </div>
-            <div className="artifact-interrupt">
-              <TriangleAlert size={15} />
-              <div><span>RESPONSE LOST</span><strong>reconcile first</strong></div>
-            </div>
+        <aside className="incident-brief" aria-label="Synthetic incident brief">
+          <div className="incident-topline">
+            <span>DEMO CASE / SYNTHETIC DATA</span>
+            <span className="incident-status"><i /> READY TO RUN</span>
           </div>
-          <div className="artifact-footnote">
-            <span><i /> Graph chooses the safe next move</span>
-            <span>Not a visualisation layer</span>
+          <h2>Shipment confirmation missing</h2>
+          <p className="incident-summary">The provider may have committed the booking before the connection failed.</p>
+          <div className="incident-facts">
+            <div><span>ORDER</span><strong>O-104 · replacement motor</strong></div>
+            <div><span>PACKAGE</span><strong>8 kg · destination Z3</strong></div>
+            <div><span>INVENTORY</span><strong>Reservation R81 · held</strong></div>
+            <div><span>LIMITS</span><strong>900 units · 16:00 cutoff</strong></div>
           </div>
-        </div>
+          <div className="incident-timeline">
+            <div><b>1</b><span><strong>Carrier A unavailable</strong><small>The original route cannot continue.</small></span></div>
+            <div><b>2</b><span><strong>Graph finds a compatible chain</strong><small>Pickup → quote → label → booking.</small></span></div>
+            <div><b>3</b><span><strong>Booking response is dropped</strong><small>Reconcile the original operation before retrying.</small></span></div>
+          </div>
+          <div className="incident-footnote"><Database size={14} /> FalkorDB connects the requirements, artifacts and allowed tools.</div>
+        </aside>
       </section>
 
       <section className="runtime-ribbon" aria-label="Local runtime status">
@@ -354,11 +340,11 @@ function App() {
 
       <section className="overview-intro">
         <div className="section-number">01 / THE PROBLEM</div>
-        <h2>A missing response can create a very expensive lie.</h2>
+        <h2>A timeout leaves one critical fact unknown: did the provider act?</h2>
         <p>
-          Conventional agents restart a broken workflow. Rewire asks the graph
-          what is already true, what remains possible, and what must be checked
-          before it touches a provider again.
+          Repeating a booking can duplicate the shipment. Assuming failure can
+          hide a booking that already exists. The recovery must query the
+          provider using the original operation key before it decides what to do.
         </p>
       </section>
 
@@ -381,7 +367,7 @@ function App() {
           <span className="proof-index">03</span>
           <FileCheck2 size={23} />
           <h3>Reconcile before retrying</h3>
-          <p>After a lost booking response, Rewire uses the operation key and an independent ledger to prove there is one booking.</p>
+          <p>After a lost booking response, Rewire checks the original operation key. An independent evaluator audit then confirms the provider created one booking.</p>
           <code>effect → receipt → audit</code>
         </article>
       </section>
@@ -390,11 +376,11 @@ function App() {
         <div className="graph-claim-mark"><GitBranch size={28} /></div>
         <div>
           <span className="eyebrow">THE GRAPH DOES REAL WORK</span>
-          <h2>Remove FalkorDB and Rewire cannot make the decision.</h2>
+          <h2>The graph supplies the recovery plan’s facts and constraints.</h2>
           <p>
             The graph is where the agent finds compatible tools, follows
             multi-hop prerequisites, rules out invalid routes, binds the
-            approved plan, and reconstructs the evidence trail.
+            approved plan, and connect each provider receipt back to the outcome.
           </p>
         </div>
         <button onClick={() => { setView("evidence"); setTab("queries"); }}>
@@ -413,7 +399,7 @@ function App() {
               <span>0{index + 1}</span>
               <strong>{item.name}</strong>
               <p>{item.description}</p>
-              <i>Open experiment <ArrowUpRight size={15} /></i>
+              <i>{item.id === "expired" ? "Inspect a safe stop" : "Run this case"} <ArrowUpRight size={15} /></i>
             </button>
           ))}
           {!scenarios.length && <div className="scenario-card loading-scenario">Loading local scenarios…</div>}
@@ -435,20 +421,28 @@ function App() {
     <>
       <div className="page-heading">
         <div>
-          <div className="eyebrow">CONNECTED DATA. CONSIDERED ACTION.</div>
+          <div className="eyebrow">
+            {view === "workspace"
+              ? "REWIRE / RECOVERY WORKSPACE"
+              : view === "evidence"
+                ? "REWIRE / DECISION EVIDENCE"
+                : "REWIRE / PRESENTATION GUIDE"}
+          </div>
           <h1>
             {view === "workspace"
-              ? "A way forward."
+              ? "Recovery workspace"
               : view === "evidence"
-                ? "Every action, accounted for."
-                : "The story behind the recovery."}
+                ? "Decision evidence"
+                : "Walk through the case"}
           </h1>
           <p>
             {view === "workspace"
-              ? "Recover the workflow. Preserve the work. Prove the outcome."
+              ? run
+                ? `Order ${run.state.goal.orderId} · ${run.plan.steps.length} proposed steps · ${receiptCount} provider receipts`
+                : "Create an incident case to discover a recovery plan from the connected tool graph."
               : view === "evidence"
-                ? "Follow the evidence from a graph query to a confirmed provider receipt."
-                : "A focused, three-minute walkthrough for your audience."}
+                ? "Inspect the Cypher results, event history and provider receipts behind this run."
+                : "A three-minute operator walkthrough of the lost-response recovery."}
           </p>
         </div>
         <button
@@ -521,7 +515,7 @@ function App() {
                   <p>
                     {
                       [
-                        "Order O-104 already has reserved stock. Carrier A is disabled. Starting over would waste valid work.",
+                        "Order O-104 has reservation R81 in HELD status. Carrier A cannot continue, but the reservation remains valid and should be reused.",
                         "The graph connects the booking goal to its prerequisites. Carrier C fails the 8 kg weight check; Carrier B needs four steps.",
                         "Review the preserved reservation, exact bindings and plan digest. Approval allows this specific recovery.",
                         "Drop the booking response after commit. Reconcile by operation key. Independently audit the provider: one booking.",
@@ -1542,19 +1536,22 @@ function App() {
       </div>
       {dialog === "new" && (
         <Dialog
-          title="A controlled failure. A real recovery."
+          title="Open a recovery case"
           onClose={() => !working && setDialog(null)}
         >
           <p className="dialog-description">
-            Each experiment creates an isolated FalkorDB graph. Provider actions
-            use a separate synthetic carrier ledger.
+            Select what changed. Rewire builds a fresh graph, finds a valid plan,
+            and waits for your approval before any provider action.
           </p>
           <div className="scenario-options">
             {scenarios.map((s) => (
               <button
                 className={scenario === s.id ? "selected" : ""}
                 key={s.id}
-                onClick={() => setScenario(s.id)}
+                onClick={() => {
+                  setScenario(s.id);
+                  setFault(s.id !== "expired");
+                }}
               >
                 <span className="radio-choice">
                   {scenario === s.id && <span />}
@@ -1567,17 +1564,29 @@ function App() {
               </button>
             ))}
           </div>
+          <div className="scenario-explainer">
+            <strong>What this case demonstrates</strong>
+            <p>
+              {scenario === "base"
+                ? "Carrier A is unavailable. FalkorDB should find Carrier B's pickup, quote and label requirements while retaining reservation R81. After booking, the simulator drops the reply so the agent must reconcile the original operation."
+                : scenario === "carrier-d"
+                  ? "Carrier B is disabled and Carrier D's contracts are added. The same graph planner must discover a compatible replacement chain without a carrier-specific fallback rule."
+                  : "Reservation R81 is past its expiry boundary. A safe result is a blocked plan with a clear reason; the agent must not dispatch using stale inventory."
+              }
+            </p>
+          </div>
           <label className="toggle-row">
             <input
               type="checkbox"
               checked={fault}
+              disabled={scenario === "expired"}
               onChange={(e) => setFault(e.target.checked)}
             />
             <div>
-              <strong>Lose the booking response after commit</strong>
+              <strong>Simulate a lost booking response</strong>
               <small>
-                The provider commits; the connection closes before the reply
-                arrives.
+                The provider records the booking, then the reply is dropped. The
+                run must check status with the same operation key.
               </small>
             </div>
           </label>
@@ -1702,7 +1711,7 @@ function App() {
                 "“We already reserved stock for this order. The original carrier is unavailable. We want one shipment, without discarding the work that is still valid.”",
                 "“FalkorDB connects the booking goal to the tools that can produce it, and recursively to their inputs. Click a node to inspect those bindings. Carrier C cannot handle this package; Carrier B needs a pickup, quote and label.”",
                 "“Nothing has been shipped yet. I approve this specific plan. The local model selects the MCP action, and the executor checks the current graph before each provider call.”",
-                "“The booking succeeded, but its response was lost. Rewire looked up the original operation instead of creating another one. Here are the graph receipts—and here is the independent provider ledger showing one booking.”",
+                "“The provider committed the booking, but the reply was lost. Rewire checked the original operation key instead of issuing a second booking. The graph contains the receipts; an independent audit reports one booking.”",
               ][guideStep]
             }
           </p>

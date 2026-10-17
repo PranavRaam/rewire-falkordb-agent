@@ -4,12 +4,12 @@
 
 ## Delivered surface
 
-- A project overview that introduces the problem, graph role and live scenarios before entering the product.
+- A project overview that introduces the synthetic O-104 incident, its known facts, graph role and scenario choices before entering the product.
 - A control room with graph-derived recovery steps, selected-record inspection, exact Cypher evidence, ordered server-sent events, replay and independent provider audit.
 - A bounded approval flow that exposes either local-model MCP execution or direct deterministic MCP execution only after a plan digest is available.
 - A mobile layout that changes the recovery map to its accessible ordered-step representation.
 
-The overview labels its fixed graph image as an illustration. It does not present synthetic events, receipts or booking counts as if a run has already occurred.
+The overview labels the incident as synthetic and ready to run. It distinguishes starting facts from later actions, so the response-loss fault and provider audit are not presented as already-observed results.
 
 ## Reproduction
 
